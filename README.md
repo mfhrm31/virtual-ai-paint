@@ -67,4 +67,47 @@ A window will open showing your webcam feed. Use the following gestures:
 
 Press `s` to save the canvas. Press `q` to quit.
 
-## 📂 Project Structure
+##  Project Structure
+
+##  Technical Approach
+
+### Hand landmark detection
+
+MediaPipe Hands is a real-time hand-tracking solution from Google providing 21 3D landmarks per hand at 30+ FPS on CPU. Each landmark is a normalized (x, y, z) coordinate.
+
+### Finger-state detection
+
+For each finger, compare the y-coordinate of the fingertip landmark against the corresponding PIP (proximal interphalangeal) joint landmark. If the fingertip is above the PIP joint, the finger is considered "up."
+
+```python
+def is_finger_up(landmarks, tip_idx, pip_idx):
+    return landmarks[tip_idx].y < landmarks[pip_idx].y
+```
+
+### Gesture-to-action mapping
+
+A finger-state vector `[thumb, index, middle, ring, pinky]` is computed each frame. Specific patterns trigger specific actions:
+
+- `[0, 1, 0, 0, 0]` → Drawing mode
+- `[0, 1, 1, 0, 0]` → Color selection mode
+- `[0, 0, 0, 0, 0]` → Clear canvas
+- `[1, 1, 0, 0, 0]` → Pinch (brush size)
+
+##  Academic Context
+
+This was my undergraduate thesis project at the University of Azad Jammu and Kashmir (2022). The work earned a thesis grade of 4.0/4.0 and laid foundational experience in:
+
+- Real-time computer vision pipelines
+- Human-computer interaction design
+- Pose/landmark estimation methods
+
+The thesis demonstrated my ability to take a computer vision system from research concept to working real-time application — a skill I now apply to clinically deployable medical AI.
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+##  Acknowledgments
+
+- Google MediaPipe team for the open-source hand tracking framework
+- OpenCV community for the computer vision toolkit
